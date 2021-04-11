@@ -1,0 +1,425 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace ÇÝZELGE_27
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+            if (String.IsNullOrEmpty(textBox1.Text) ||String.IsNullOrEmpty(textBox2.Text) ||String.IsNullOrEmpty(textBox3.Text) ||String.IsNullOrEmpty(textBox4.Text) ||String.IsNullOrEmpty(textBox5.Text) ||String.IsNullOrEmpty(textBox6.Text) ||String.IsNullOrEmpty(textBox7.Text) ||String.IsNullOrEmpty(textBox8.Text) ||String.IsNullOrEmpty(textBox9.Text) ||String.IsNullOrEmpty(textBox10.Text) )
+            {
+                MessageBox.Show("Ýstenilen deðerlerden bir yada birkaçýný girmediniz. Lütfen deðerleri giriniz.","Deðer Girdi Hatasý");
+                return;
+            }
+            
+            int BetKal = Convert.ToInt16(textBox1.Text); //Beton kalitesi
+            Double fck = 0, fcd = 0, fctk = 0, fctd = 0, Ec = 0, Gc = 0, k1 = 0;
+            string DonKal = textBox2.Text;  //Donatý Kalitesi
+            Double fyk = 0, fyd = 0;
+            double uc = 0.2, ecu = 0.003, es = 200000, use = 0.3, usp = 0.5, esu = 0.1;
+            if (BetKal == 16)
+            {
+                fck = 16;
+                fcd = 11;
+                fctk = 1.4;
+                fctd = 0.9;
+                Ec = 27000;
+                Gc = 10800;
+                k1 = 0.85;
+            }
+            else if (BetKal == 18)
+            {
+                fck = 18;
+                fcd = 12;
+                fctk = 1.5;
+                fctd = 0.95;
+                Ec = 27500;
+                Gc = 11000;
+                k1 = 0.85;
+            }
+            else if (BetKal == 20)
+            {
+                fck = 20;
+                fcd = 13;
+                fctk = 1.6;
+                fctd = 1;
+                Ec = 28000;
+                Gc = 11200;
+                k1 = 0.85;
+            }
+            else if (BetKal == 25)
+            {
+                fck = 25;
+                fcd = 17;
+                fctk = 1.8;
+                fctd = 1.15;
+                Ec = 30000;
+                Gc = 12000;
+                k1 = 0.85;
+            }
+            else if (BetKal == 30)
+            {
+                fck = 30;
+                fcd = 20;
+                fctk = 1.9;
+                fctd = 1.25;
+                Ec = 32000;
+                Gc = 12800;
+                k1 = 0.82;
+            }
+            else if (BetKal == 35)
+            {
+                fck = 35;
+                fcd = 23;
+                fctk = 2.1;
+                fctd = 1.35;
+                Ec = 33000;
+                Gc = 13200;
+                k1 = 0.79;
+            }
+            else if (BetKal == 40)
+            {
+                fck = 40;
+                fcd = 27;
+                fctk = 2.2;
+                fctd = 1.45;
+                Ec = 34000;
+                Gc = 13600;
+                k1 = 0.76;
+            }
+            else if (BetKal == 45)
+            {
+                fck = 45;
+                fcd = 30;
+                fctk = 2.3;
+                fctd = 1.55;
+                Ec = 36000;
+                Gc = 14400;
+                k1 = 0.73;
+            }
+            else if (BetKal == 50)
+            {
+                fck = 50;
+                fcd = 33;
+                fctk = 2.5;
+                fctd = 1.65;
+                Ec = 37000;
+                Gc = 14800;
+                k1 = 0.7;
+            }
+            else
+            {
+                MessageBox.Show("Yanlýþ yada geçersiz bir deðer girdiniz. Girdiðiniz deðeri kontrol ediniz.", "Beton Sýnýfý Hatasý");
+                return;
+            }
+
+            if (DonKal == "220")
+            {
+                fyk = 220;
+                fyd = 191;
+            }
+            else if (DonKal == "420" || DonKal == "420b")
+            {
+                fyk = 420;
+                fyd = 365;
+            }
+            else if (DonKal == "500")
+            {
+                fyk = 500;
+                fyd = 435;
+            }
+            else if (DonKal == "500b")
+            {
+                fyk = 500;
+                fyd = 435;
+            }
+            else
+            {
+                MessageBox.Show("Yanlýþ yada geçersiz bir deðer girdiniz. Girdiðiniz deðeri kontrol ediniz.", "Donatý Sýnýfý Hatasý");
+                return;
+            }
+            Double b = Convert.ToDouble(textBox3.Text);
+            if (b < 250)
+            {
+                MessageBox.Show("Girdiðiniz kolonun küçük boyutu(b) yönetmelik koþulunu saðlamamaktadýr. (250mm)", "Yönetmelik Uyarýsý");
+                return;
+            }
+            Double h = Convert.ToDouble(textBox4.Text);
+            if (h < 300)
+            {
+                MessageBox.Show("Girdiðiniz kolonun eðilme doðrultusundaki boyutu(h) yönetmelik koþulunu saðlamamaktadýr. (300mm)", "Yönetmelik Uyarýsý");
+                return;
+            }
+            if ((b * h) < 75000)
+            {
+                MessageBox.Show("Girdiðiniz kolonun enkesit alaný(Ac) deprem yönetmeliði koþulunu saðlamamaktadýr. (75000mm^2)", "Yönetmelik Uyarýsý");
+                return;
+            }
+            if ((h / b) > 7)
+            {
+                MessageBox.Show("Girdiðiniz boyutlar perde duvarýna aittir. Perde duvar tasarýmý yapýnýz.", "Çizelge Uyarýsý");
+                return;
+            }
+            Double d = Convert.ToDouble(textBox5.Text);
+            Double cap = Convert.ToDouble(textBox6.Text);
+            if (cap < 8)
+            {
+                MessageBox.Show("Donatý çapý yönetmelik koþullarýný saðlamamaktadýr. Donatý çapýný arttýrýnýz.", "Yönetmelik Uyarýsý");
+                return;
+            }
+            Double sart = cap % 2;
+            if (sart == 1)
+            {
+                MessageBox.Show("Donatý çapý çift sayý olmalýdýr.", "Yönetmelik Uyarýsý");
+                return;
+            }
+            Double n = Convert.ToDouble(textBox7.Text);
+            if (sart == n)
+            {
+                MessageBox.Show("Etriye kol sayýsý(n) 2 den küçük olamaz.", "Mantýk Hatasý");
+                return;
+            }
+            Double cap2 = Convert.ToDouble(textBox8.Text);
+            if (cap2 < 14)
+            {
+                MessageBox.Show("Minimum asal donatý çapý yönetmelik koþullarýný saðlamamaktadýr. Donatý çapýný arttýrýnýz.", "Yönetmelik Uyarýsý");
+                return;
+            }
+            Double Vd = Convert.ToDouble(textBox9.Text);
+            Vd = Vd * 1000;
+            Double Nd = Convert.ToDouble(textBox10.Text);
+            Nd = Nd * 1000;
+            Double pi = 3.1415926535;
+            Double Ac=b*h;
+            Double Vcr=(0.65 * fctd * b * d * ((1 + (0.007 * (Nd / Ac)))));
+            if(Vd>=0.22*Ac*fcd)
+            {
+                MessageBox.Show("Kesit uygun deðil.Kesit boyutlarý arttýrýlmalýdýr.", "Yönetmelik Uyarýsý");
+                return;
+            }
+            else if (Vd <= (0.65 * fctd * b * d * ((1 + (0.007 * (Nd / Ac))))))
+            {
+                double sk;
+                if ((b / 3) <= (8 * cap2))
+                {
+                    if ((b / 3) <= 150)
+                    {
+                        sk = (b / 3);
+                        sk = Math.Floor(sk);
+                        Double Kalan = sk % 10;
+                        sk = sk - Kalan;
+                        textBox11.Text = Convert.ToString(sk);
+                        textBox13.Text = "Yönetmelikteki minimum sarýlma bölgesi etriye aralýðý";
+                    }
+                    else
+                    {
+                        sk = 150;
+                        sk = Math.Floor(sk);
+                        Double Kalan = sk % 10;
+                        sk = sk - Kalan;
+                        textBox11.Text = Convert.ToString(sk);
+                        textBox13.Text = "Yönetmelikteki minimum sarýlma bölgesi etriye aralýðý";
+                    }
+                }
+                else
+                {
+                    if ((8 * cap2) <= 150)
+                    {
+                        sk = (8 * cap2);
+                        sk = Math.Floor(sk);
+                        Double Kalan = sk % 10;
+                        sk = sk - Kalan;
+                        textBox11.Text = Convert.ToString(sk);
+                        textBox13.Text = "Yönetmelikteki minimum sarýlma bölgesi etriye aralýðý";
+                    }
+                    else
+                    {
+                        sk = 150;
+                        sk = Math.Floor(sk);
+                        Double Kalan = sk % 10;
+                        sk = sk - Kalan;
+                        textBox11.Text = Convert.ToString(sk);
+                        textBox13.Text = "Yönetmelikteki minimum sarýlma bölgesi etriye aralýðý";
+                    }
+                }
+                if ((b / 2) <= (12 * cap2))
+                {
+                    if ((b / 2) <= 200)
+                    {
+                        sk = (b / 2);
+                        sk = Math.Floor(sk);
+                        Double Kalan = sk % 10;
+                        sk = sk - Kalan;
+                        textBox12.Text = Convert.ToString(sk);
+                        textBox14.Text = "Yönetmelikteki minimum orta bölge etriye aralýðý";
+                    }
+                    else
+                    {
+                        sk = 200;
+                        sk = Math.Floor(sk);
+                        Double Kalan = sk % 10;
+                        sk = sk - Kalan;
+                        textBox12.Text = Convert.ToString(sk);
+                        textBox14.Text = "Yönetmelikteki minimum orta bölge etriye aralýðý";
+                    }
+                }
+                else
+                {
+                    if ((12 * cap2) <= 200)
+                    {
+                        sk = (12 * cap2);
+                        sk = Math.Floor(sk);
+                        Double Kalan = sk % 10;
+                        sk = sk - Kalan;
+                        textBox12.Text = Convert.ToString(sk);
+                        textBox14.Text = "Yönetmelikteki minimum orta bölge etriye aralýðý";
+                    }
+                    else
+                    {
+                        sk = 200;
+                        sk = Math.Floor(sk);
+                        Double Kalan = sk % 10;
+                        sk = sk - Kalan;
+                        textBox12.Text = Convert.ToString(sk);
+                        textBox14.Text = "Yönetmelikteki minimum orta bölge etriye aralýðý";
+                    }
+                }
+
+            }
+            else
+            {
+                Double sk2;
+                Double Asw = (pi * n * cap * cap) / 4;
+                Double Vc = 0.8 * Vcr;
+                Double Vw = Vd - Vc;
+                Double Sc = (Asw * fyd * d) / Vw;
+                if (Sc <= (b / 3) && Sc <= (8 * cap2) && Sc <= 150)
+                {
+                    sk2 = Sc;
+                    sk2 = Math.Floor(sk2);
+                    Double Kalan = sk2 % 10;
+                    sk2 = sk2 - Kalan;
+                    textBox11.Text = Convert.ToString(sk2);
+                    textBox13.Text = "Hesaplanan etriye aralýðý deðeri.";
+
+                }
+                else
+                {
+                    Double sk;
+                    if ((b / 3) <= (8 * cap2))
+                    {
+                        if ((b / 3) <= 150)
+                        {
+                            sk = (b / 3);
+                            sk = Math.Floor(sk);
+                            Double Kalan = sk % 10;
+                            sk = sk - Kalan;
+                            textBox11.Text = Convert.ToString(sk);
+                            textBox13.Text = "Yönetmelikteki minimum sarýlma bölgesi etriye aralýðý";
+                        }
+                        else
+                        {
+                            sk = 150;
+                            sk = Math.Floor(sk);
+                            Double Kalan = sk % 10;
+                            sk = sk - Kalan;
+                            textBox11.Text = Convert.ToString(sk);
+                            textBox13.Text = "Yönetmelikteki minimum sarýlma bölgesi etriye aralýðý";
+                        }
+                    }
+                    else
+                    {
+                        if ((8 * cap2) <= 150)
+                        {
+                            sk = (8 * cap2);
+                            sk = Math.Floor(sk);
+                            Double Kalan = sk % 10;
+                            sk = sk - Kalan;
+                            textBox11.Text = Convert.ToString(sk);
+                            textBox13.Text = "Yönetmelikteki minimum sarýlma bölgesi etriye aralýðý";
+                        }
+                        else
+                        {
+                            sk = 150;
+                            sk = Math.Floor(sk);
+                            Double Kalan = sk % 10;
+                            sk = sk - Kalan;
+                            textBox11.Text = Convert.ToString(sk);
+                            textBox13.Text = "Yönetmelikteki minimum sarýlma bölgesi etriye aralýðý";
+                        }
+                    }
+                }
+                Double Vc2 = 0.8 * Vcr;
+                Double Vw2 = Vd - Vc2;
+                Double So = (Asw * fyd * d) / Vw2;
+                if (So <= (b / 2) && So <= 200 && So <= (12 * cap2))
+                {
+                    sk2 = So;
+                    sk2 = Math.Floor(sk2);
+                    Double Kalan = sk2 % 10;
+                    sk2 = sk2 - Kalan;
+                    textBox12.Text = Convert.ToString(sk2);
+                    textBox14.Text = "Hesaplanan etriye aralýðý deðeri.";
+                }
+                Double sk3;
+                if ((b / 2) <= (12 * cap2))
+                {
+                    if ((b / 2) <= 200)
+                    {
+                        sk3 = (b / 2);
+                        sk3 = Math.Floor(sk3);
+                        Double Kalan = sk3 % 10;
+                        sk3 = sk3 - Kalan;
+                        textBox12.Text = Convert.ToString(sk3);
+                        textBox14.Text = "Yönetmelikteki minimum orta bölge etriye aralýðý";
+                    }
+                    else
+                    {
+                        sk3 = 200;
+                        sk3 = Math.Floor(sk3);
+                        Double Kalan = sk3 % 10;
+                        sk3 = sk3 - Kalan;
+                        textBox12.Text = Convert.ToString(sk3);
+                        textBox14.Text = "Yönetmelikteki minimum orta bölge etriye aralýðý";
+                    }
+                }
+                else
+                {
+                    if ((12 * cap2) <= 200)
+                    {
+                        sk3 = (12 * cap2);
+                        sk3 = Math.Floor(sk3);
+                        Double Kalan = sk3 % 10;
+                        sk3 = sk3 - Kalan;
+                        textBox12.Text = Convert.ToString(sk3);
+                        textBox14.Text = "Yönetmelikteki minimum orta bölge etriye aralýðý";
+                    }
+                    else
+                    {
+                        sk3 = 200;
+                        sk3 = Math.Floor(sk3);
+                        Double Kalan = sk3 % 10;
+                        sk3 = sk3 - Kalan;
+                        textBox12.Text = Convert.ToString(sk3);
+                        textBox14.Text = "Yönetmelikteki minimum orta bölge etriye aralýðý";
+                    }
+                }
+            }
+
+
+        }
+    }
+}

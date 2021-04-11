@@ -1,0 +1,104 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using WindowsFormsApplication1;
+using ÇÝZELGE_5;
+using ÇÝZELGE_6;
+using ÇÝZELGE_7;
+using ÇÝZELGE_8;
+using ÇÝZELGE_9;
+using ÇÝZELGE_10;
+using ÇÝZELGE_15;
+using ÇÝZELGE_16;
+using ÇÝZELGE_27;
+
+namespace Çizelgeleri_Seçme
+{
+    public partial class Form1 : Form
+    {
+        
+        public Form1()
+        {
+            
+            InitializeComponent();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (comboBox1.Text == "TEK DONATILI DÝKDÖRTGEN KESÝTLER ÝÇÝN KESÝT HESABI (ÇÝZELGE 4)")
+            {
+                WindowsFormsApplication1.Form1 prj2Frm1 = new WindowsFormsApplication1.Form1();
+
+                prj2Frm1.Show();
+            }
+            else if (comboBox1.Text == "TEK DONATILI DÝKDÖRTGEN KESÝTLER ÝÇÝN KESÝT TASARIMI (ÇÝZELGE 5)")
+            {
+                ÇÝZELGE_5.Form1 prj2Frm1 = new ÇÝZELGE_5.Form1();
+
+                prj2Frm1.Show();
+            }
+            else if (comboBox1.Text == "ÇÝFT DONATILI DÝKDÖRTGEN KÝRÝÞLER ÝÇÝN KESÝT HESABI (ÇÝZELGE 6)" )
+            {
+                ÇÝZELGE_6.Form1 prj2Frm1 = new ÇÝZELGE_6.Form1();
+
+                prj2Frm1.Show();
+            }
+            else if (comboBox1.Text == "ÇÝFT DONATILI DÝKDÖRTGEN KÝRÝÞLER ÝÇÝN KESÝT TASARIMI (ÇÝZELGE 7)")
+            {
+                ÇÝZELGE_7.Form1 prj2Frm1 = new ÇÝZELGE_7.Form1();
+
+                prj2Frm1.Show();
+            }
+            else if (comboBox1.Text == "TEK DONATILI TABLALI KÝRÝÞLER ÝÇÝN KESÝT HESABI (ÇÝZELGE 8)")
+            {
+                ÇÝZELGE_8.Form1 prj2Frm1 = new ÇÝZELGE_8.Form1();
+
+                prj2Frm1.Show();
+            }
+            else if (comboBox1.Text == "TEK DONATILI TABLALI KÝRÝÞLER ÝÇÝN KESÝT TASARIMI (ÇÝZELGE 9)")
+            {
+                ÇÝZELGE_9.Form1 prj2Frm1 = new ÇÝZELGE_9.Form1();
+
+                prj2Frm1.Show();
+            }
+            else if (comboBox1.Text == "KÝRÝÞLERDE KESME DONATISI HESABI (ÇÝZELGE 10)")
+            {
+                ÇÝZELGE_10.Form1 prj2Frm1 = new ÇÝZELGE_10.Form1();
+
+                prj2Frm1.Show();
+            }
+            else if (comboBox1.Text == "SÝMETRÝK DONATILI DÝKDÖRTGEN KESÝTLÝ KOLONLARIN KESÝT HESABI (ÇÝZELGE 15)")
+            {
+                ÇÝZELGE_15.Form1 prj2Frm1 = new ÇÝZELGE_15.Form1();
+
+                prj2Frm1.Show();
+            }
+            else if (comboBox1.Text == "BÝR DOÐRULTUDA BÝRLEÞÝK EÐÝLME ETKÝSÝNDEKÝ KALIN KOLONLARIN TASARIMI (ÇÝZELGE 16)")
+            {
+                ÇÝZELGE_16.Form1 prj2Frm1 = new ÇÝZELGE_16.Form1();
+
+                prj2Frm1.Show();
+            }
+            else if (comboBox1.Text == "KOLONLARIN KESMEYE GÖRE TASARIMI (ÇÝZELGE 27)")
+            {
+                ÇÝZELGE_27.Form1 prj2Frm1 = new ÇÝZELGE_27.Form1();
+
+                prj2Frm1.Show();
+            }
+            else
+            {
+                MessageBox.Show("Lütfen listeden bir çizelge seçiniz.","Seçim Yapýlmadý");
+            }
+        }
+    }
+}

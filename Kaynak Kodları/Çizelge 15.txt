@@ -1,0 +1,299 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace ÇÝZELGE_15
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(textBox1.Text) || String.IsNullOrEmpty(textBox2.Text) || String.IsNullOrEmpty(textBox3.Text) || String.IsNullOrEmpty(textBox4.Text) || String.IsNullOrEmpty(textBox5.Text) || String.IsNullOrEmpty(textBox6.Text) || String.IsNullOrEmpty(textBox7.Text) || String.IsNullOrEmpty(textBox8.Text) || String.IsNullOrEmpty(textBox9.Text) )
+            {
+                MessageBox.Show("Ýstenilen deðerlerden bir yada birkaçýný girmediniz. Lütfen deðerleri giriniz.", "Deðer Girdi Hatasý");
+                return;
+            }
+            int BetKal = Convert.ToInt16(textBox1.Text); //Beton kalitesi
+            Double fck = 0, fcd = 0, fctk = 0, fctd = 0, Ec = 0, Gc = 0, k1 = 0;
+            string DonKal = textBox2.Text;  //Donatý Kalitesi
+            Double fyk = 0, fyd = 0;
+            double uc = 0.2, ecu = 0.003, es = 200000, use = 0.3, usp = 0.5, esu = 0.1;
+            if (BetKal == 16)
+            {
+                fck = 16;
+                fcd = 11;
+                fctk = 1.4;
+                fctd = 0.9;
+                Ec = 27000;
+                Gc = 10800;
+                k1 = 0.85;
+            }
+            else if (BetKal == 18)
+            {
+                fck = 18;
+                fcd = 12;
+                fctk = 1.5;
+                fctd = 0.95;
+                Ec = 27500;
+                Gc = 11000;
+                k1 = 0.85;
+            }
+            else if (BetKal == 20)
+            {
+                fck = 20;
+                fcd = 13;
+                fctk = 1.6;
+                fctd = 1;
+                Ec = 28000;
+                Gc = 11200;
+                k1 = 0.85;
+            }
+            else if (BetKal == 25)
+            {
+                fck = 25;
+                fcd = 17;
+                fctk = 1.8;
+                fctd = 1.15;
+                Ec = 30000;
+                Gc = 12000;
+                k1 = 0.85;
+            }
+            else if (BetKal == 30)
+            {
+                fck = 30;
+                fcd = 20;
+                fctk = 1.9;
+                fctd = 1.25;
+                Ec = 32000;
+                Gc = 12800;
+                k1 = 0.82;
+            }
+            else if (BetKal == 35)
+            {
+                fck = 35;
+                fcd = 23;
+                fctk = 2.1;
+                fctd = 1.35;
+                Ec = 33000;
+                Gc = 13200;
+                k1 = 0.79;
+            }
+            else if (BetKal == 40)
+            {
+                fck = 40;
+                fcd = 27;
+                fctk = 2.2;
+                fctd = 1.45;
+                Ec = 34000;
+                Gc = 13600;
+                k1 = 0.76;
+            }
+            else if (BetKal == 45)
+            {
+                fck = 45;
+                fcd = 30;
+                fctk = 2.3;
+                fctd = 1.55;
+                Ec = 36000;
+                Gc = 14400;
+                k1 = 0.73;
+            }
+            else if (BetKal == 50)
+            {
+                fck = 50;
+                fcd = 33;
+                fctk = 2.5;
+                fctd = 1.65;
+                Ec = 37000;
+                Gc = 14800;
+                k1 = 0.7;
+            }
+            else
+            {
+                MessageBox.Show("Yanlýþ yada geçersiz bir deðer girdiniz. Girdiðiniz deðeri kontrol ediniz.", "Beton Sýnýfý Hatasý");
+                return;
+            }
+
+            if (DonKal == "220")
+            {
+                fyk = 220;
+                fyd = 191;
+            }
+            else if (DonKal == "420" || DonKal == "420b")
+            {
+                fyk = 420;
+                fyd = 365;
+            }
+            else if (DonKal == "500")
+            {
+                fyk = 500;
+                fyd = 435;
+            }
+            else if (DonKal == "500b")
+            {
+                fyk = 500;
+                fyd = 435;
+            }
+            else
+            {
+                MessageBox.Show("Yanlýþ yada geçersiz bir deðer girdiniz. Girdiðiniz deðeri kontrol ediniz.", "Donatý Sýnýfý Hatasý");
+                return;
+            }
+            Double cap = Convert.ToDouble(textBox3.Text);
+            if (cap < 14)
+            {
+                MessageBox.Show("Donatý çapý yönetmelik koþullarýný saðlamamaktadýr. Donatý çapýný arttýrýnýz.", "Yönetmelik Uyarýsý");
+                return;
+            }
+            Double sart5 = cap % 2;
+            if (sart5 == 1)
+            {
+                MessageBox.Show("Donatý çapý çift sayý olmalýdýr.", "Yönetmelik Uyarýsý");
+                return;
+            }
+            Double adet = Convert.ToDouble(textBox4.Text);
+            if (cap == 14 && adet < 6)
+            {
+                MessageBox.Show("Donatý adedi yönetmelik koþullarýný saðlamamaktadýr. Donatý adedini arttýrýnýz.", "Yönetmelik Uyarýsý");
+                return;
+            }
+            if (cap == 16 && adet < 4)
+            {
+                MessageBox.Show("Donatý adedi yönetmelik koþullarýný saðlamamaktadýr. Donatý adedini arttýrýnýz.", "Yönetmelik Uyarýsý");
+                return;
+            }
+            Double b = Convert.ToDouble(textBox5.Text);
+            if (b < 250)
+            {
+                MessageBox.Show("Girdiðiniz kolonun küçük boyutu(b) yönetmelik koþulunu saðlamamaktadýr. (250mm)", "Yönetmelik Uyarýsý");
+                return;
+            }
+            Double h = Convert.ToDouble(textBox6.Text);
+            if (h < 300)
+            {
+                MessageBox.Show("Girdiðiniz kolonun eðilme doðrultusundaki boyutu(h) yönetmelik koþulunu saðlamamaktadýr. (300mm)", "Yönetmelik Uyarýsý");
+                return;
+            }
+            if((b*h)<75000)
+            {
+                MessageBox.Show("Girdiðiniz kolonun enkesit alaný(Ac) deprem yönetmeliði koþulunu saðlamamaktadýr. (75000mm^2)", "Yönetmelik Uyarýsý");
+                return;
+            }
+            if((h/b)>7)
+            {
+                MessageBox.Show("Girdiðiniz boyutlar perde duvarýna aittir. Perde duvar tasarýmý yapýnýz.", "Çizelge Uyarýsý");
+                return;
+            }
+
+            Double d = Convert.ToDouble(textBox7.Text);
+            Double d2 = Convert.ToDouble(textBox8.Text);
+            Double Nd = Convert.ToDouble(textBox9.Text);
+            Nd=Nd*1000;
+            Double pi = 3.1415926535;
+            Double Ast = adet * cap * cap * pi / 4;
+            Double Cb = (600 / (600 + fyd)) * d;
+            Double ab = k1 * Cb;
+            Double Nb = 0.85 * fcd * ab * b;
+            if (Nd < Nb)
+            {
+
+                Double Wc = 0.85 * k1 * (d2 / h) * (600 / (600 - fyd));
+                Double sart = (Nd / (b * h * fcd));
+                if (sart > Wc)
+                {
+                    textBox10.Text = "Çekme kýrýlmasý, basýnç bölgesindeki donatý akmýþtýr.";
+                    Double a = Nd / (0.85 * b * fcd);
+                    Double Mr = (0.85 * fcd * a * b * ((h / 2) - (a / 2))) + ((Ast / 2) * fyd * (d - d2));
+                    Mr = Mr / 1000000;
+                    textBox11.Text = Convert.ToString(Mr);
+                    textBox12.Text = "Gerekli Bütün Koþullar Saðlanmýþtýr. Girilen Deðerler kullanýlabilir.";
+                }
+                else
+                {
+                    textBox10.Text = "Çekme kýrýlmasý, basýnç bölgesindeki donatý akmamýþtýr.";
+                    Double A1 = 0.85 * fcd * k1 * b;
+                    Double A2 = (300 * Ast) - Nd - ((Ast / 2) * fyd);
+                    Double A3 = -(300 * Ast * d2);
+                    Double sayi = ((A2 * A2) - (4 * A1 * A3));
+                    sayi = Math.Sqrt(sayi);
+                    Double C1 = (-A2 + sayi) / (2 * A1);
+                    Double C2 = (-A2 - sayi) / (2 * A1);
+                    Double c = 0;
+                    if (C1 > 0)
+                    {
+                        c = C1;
+                    }
+                    else if (C2 > 0)
+                    {
+                        c = C2;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Anlamlý C bulunamýyor.", "Ýþlem Hatasý");
+                        return;
+                    }
+                    Double a = k1 * c;
+                    Double Rs2 = 600 * ((c - d2) / c);
+                    if (Rs2 <= fyd)
+                    {
+                        textBox12.Text = "Gerekli Bütün Koþullar Saðlanmýþtýr. Girilen Deðerler kullanýlabilir.";
+                    }
+                    else
+                    {
+                        textBox12.Text = "Rs2<=fyd þartý saðlanmamýþtýr. Girilen Deðerler kullanýlabilir.";
+                    }
+                    Double Mr = (0.85 * fcd * a * b * ((h / 2) - (a / 2))) + ((Ast / 2) * (fyd + Rs2) * ((d - d2) / 2));
+                    Mr = Mr / 1000000;
+                    textBox11.Text = Convert.ToString(Mr);
+                }
+            }
+            else
+            {
+                textBox10.Text = "Basýnç Kýrýlmasý";
+                Double A1 = 0.85 * fcd * b * k1;
+                Double A2 = (-Nd) + ((Ast / 2) * (600 + fyd));
+                Double A3 = -((Ast / 2) * 600 * d);
+                Double sayi = ((A2 * A2) - (4 * A1 * A3));
+                sayi = Math.Sqrt(sayi);
+                Double C1 = (-A2 + sayi) / (2 * A1);
+                Double C2 = (-A2 - sayi) / (2 * A1);
+                Double c = 0;
+                if (C1 > 0)
+                {
+                    c = C1;
+                }
+                else if (C2 > 0)
+                {
+                    c = C2;
+                }
+                else
+                {
+                    MessageBox.Show("Anlamlý C bulunamýyor.", "Ýþlem Hatasý");
+                    return;
+                }
+                Double a = k1 * c;
+                Double Rs1 = 600 * ((c - d) / c);
+                Double Mr = (0.85 * fcd * a * b * ((h / 2) - (a / 2))) + ((Ast / 2) * (fyd - Rs1) * ((d - d2) / 2));
+                Mr = Mr / 1000000;
+                textBox11.Text = Convert.ToString(Mr);
+                textBox12.Text = "Gerekli Bütün Koþullar Saðlanmýþtýr. Girilen Deðerler kullanýlabilir.";
+
+            }
+        }
+    }
+}

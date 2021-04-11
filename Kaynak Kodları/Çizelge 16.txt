@@ -1,0 +1,580 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace ÇÝZELGE_16
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(textBox1.Text) || String.IsNullOrEmpty(textBox2.Text) || String.IsNullOrEmpty(textBox3.Text) || String.IsNullOrEmpty(textBox4.Text) || String.IsNullOrEmpty(textBox5.Text) || String.IsNullOrEmpty(textBox6.Text) || String.IsNullOrEmpty(textBox7.Text) || String.IsNullOrEmpty(textBox8.Text))
+            {
+                MessageBox.Show("Ýstenilen deðerlerden bir yada birkaçýný girmediniz. Lütfen deðerleri giriniz.", "Deðer Girdi Hatasý");
+                return;
+            }
+            int BetKal = Convert.ToInt16(textBox1.Text); //Beton kalitesi
+            Double fck = 0, fcd = 0, fctk = 0, fctd = 0, Ec = 0, Gc = 0, k1 = 0;
+            string DonKal = textBox2.Text;  //Donatý Kalitesi
+            Double fyk = 0, fyd = 0;
+            double uc = 0.2, ecu = 0.003, es = 200000, use = 0.3, usp = 0.5, esu = 0.1;
+            if (BetKal == 16)
+            {
+                fck = 16;
+                fcd = 11;
+                fctk = 1.4;
+                fctd = 0.9;
+                Ec = 27000;
+                Gc = 10800;
+                k1 = 0.85;
+            }
+            else if (BetKal == 18)
+            {
+                fck = 18;
+                fcd = 12;
+                fctk = 1.5;
+                fctd = 0.95;
+                Ec = 27500;
+                Gc = 11000;
+                k1 = 0.85;
+            }
+            else if (BetKal == 20)
+            {
+                fck = 20;
+                fcd = 13;
+                fctk = 1.6;
+                fctd = 1;
+                Ec = 28000;
+                Gc = 11200;
+                k1 = 0.85;
+            }
+            else if (BetKal == 25)
+            {
+                fck = 25;
+                fcd = 17;
+                fctk = 1.8;
+                fctd = 1.15;
+                Ec = 30000;
+                Gc = 12000;
+                k1 = 0.85;
+            }
+            else if (BetKal == 30)
+            {
+                fck = 30;
+                fcd = 20;
+                fctk = 1.9;
+                fctd = 1.25;
+                Ec = 32000;
+                Gc = 12800;
+                k1 = 0.82;
+            }
+            else if (BetKal == 35)
+            {
+                fck = 35;
+                fcd = 23;
+                fctk = 2.1;
+                fctd = 1.35;
+                Ec = 33000;
+                Gc = 13200;
+                k1 = 0.79;
+            }
+            else if (BetKal == 40)
+            {
+                fck = 40;
+                fcd = 27;
+                fctk = 2.2;
+                fctd = 1.45;
+                Ec = 34000;
+                Gc = 13600;
+                k1 = 0.76;
+            }
+            else if (BetKal == 45)
+            {
+                fck = 45;
+                fcd = 30;
+                fctk = 2.3;
+                fctd = 1.55;
+                Ec = 36000;
+                Gc = 14400;
+                k1 = 0.73;
+            }
+            else if (BetKal == 50)
+            {
+                fck = 50;
+                fcd = 33;
+                fctk = 2.5;
+                fctd = 1.65;
+                Ec = 37000;
+                Gc = 14800;
+                k1 = 0.7;
+            }
+            else
+            {
+                MessageBox.Show("Yanlýþ yada geçersiz bir deðer girdiniz. Girdiðiniz deðeri kontrol ediniz.", "Beton Sýnýfý Hatasý");
+                return;
+            }
+
+            if (DonKal == "220")
+            {
+                fyk = 220;
+                fyd = 191;
+            }
+            else if (DonKal == "420" || DonKal == "420b")
+            {
+                fyk = 420;
+                fyd = 365;
+            }
+            else if (DonKal == "500")
+            {
+                fyk = 500;
+                fyd = 435;
+            }
+            else if (DonKal == "500b")
+            {
+                fyk = 500;
+                fyd = 435;
+            }
+            else
+            {
+                MessageBox.Show("Yanlýþ yada geçersiz bir deðer girdiniz. Girdiðiniz deðeri kontrol ediniz.", "Donatý Sýnýfý Hatasý");
+                return;
+            }
+            Double adet = Convert.ToDouble(textBox3.Text);
+            Double b = Convert.ToDouble(textBox4.Text);
+            if (b < 250)
+            {
+                MessageBox.Show("Girdiðiniz kolonun küçük boyutu(b) yönetmelik koþulunu saðlamamaktadýr. (250mm)", "Yönetmelik Uyarýsý");
+                return;
+            }
+            Double h = Convert.ToDouble(textBox5.Text);
+            if (h < 300)
+            {
+                MessageBox.Show("Girdiðiniz kolonun eðilme doðrultusundaki boyutu(h) yönetmelik koþulunu saðlamamaktadýr. (300mm)", "Yönetmelik Uyarýsý");
+                return;
+            }
+            if ((b * h) < 75000)
+            {
+                MessageBox.Show("Girdiðiniz kolonun enkesit alaný(Ac) deprem yönetmeliði koþulunu saðlamamaktadýr. (75000mm^2)", "Yönetmelik Uyarýsý");
+                return;
+            }
+            if ((h / b) > 7)
+            {
+                MessageBox.Show("Girdiðiniz boyutlar perde duvarýna aittir. Perde duvar tasarýmý yapýnýz.", "Çizelge Uyarýsý");
+                return;
+            }
+            Double d = Convert.ToDouble(textBox6.Text);
+            Double Nd = Convert.ToDouble(textBox7.Text);
+            Nd = Nd * 1000;
+            Double Md = Convert.ToDouble(textBox8.Text);
+            Md = Md * 1000000;
+            Double Ac=b*h;
+            if (Nd >= (0.5 * Ac * fck))
+            {
+                MessageBox.Show("Kesit uygun deðil kesit boyutlarý arttýrýlmalýdýr.", "Deprem Yönetmeliði Uyarýsý");
+                return;
+            }
+            else
+            {
+                Double sayi1 = Nd / (b * h * fcd);
+                Double sayi2 = Md / (b * h * h * fcd);
+                sayi1 = Math.Round(sayi1, 3);
+                sayi2 = Math.Round(sayi2, 3);
+                textBox9.Text = Convert.ToString(sayi1);
+                textBox10.Text = Convert.ToString(sayi2);
+            }
+            Double a = d;
+            Double c = h;
+            Double oran = (a / c);
+            oran = Math.Round(oran, 1);
+            Double DonKal2 = Convert.ToDouble(DonKal);
+            if (DonKal2 == 220)
+            {
+                if (adet == 6)
+                {
+                    if (oran == 0.8)
+                    {
+                        pictureBox1.ImageLocation = "6 S220 0,8.png";
+                    }
+                    else if (oran == 0.9)
+                    {
+                        pictureBox1.ImageLocation = "6 S220 0,9.png";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Kolonun eðilme doðrultusundaki boyutu(h) ile kolon içindeki donatýlar arasýndaki mesafe(d'') oraný geçersizdir. Lütfen oraný 0.8 yada 0.9 yapacak þekilde h ve d'' deðerlerini deðiþtiriniz.", "Oran Hatasý");
+                        return;
+                    }
+                }
+                else if (adet == 8)
+                {
+                    if (oran == 0.8)
+                    {
+                        pictureBox1.ImageLocation = "8 S220 0,8.png";
+                    }
+                    else if (oran == 0.9)
+                    {
+                        pictureBox1.ImageLocation = "8 S220 0,9.png";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Kolonun eðilme doðrultusundaki boyutu(h) ile kolon içindeki donatýlar arasýndaki mesafe(d'') oraný geçersizdir. Lütfen oraný 0.8 yada 0.9 yapacak þekilde h ve d'' deðerlerini deðiþtiriniz.", "Oran Hatasý");
+                        return;
+                    }
+                }
+                else if (adet == 12)
+                {
+                    if (oran == 0.8)
+                    {
+                        pictureBox1.ImageLocation = "12 S220 0,8.png";
+                    }
+                    else if (oran == 0.9)
+                    {
+                        pictureBox1.ImageLocation = "12 S220 0,9.png";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Kolonun eðilme doðrultusundaki boyutu(h) ile kolon içindeki donatýlar arasýndaki mesafe(d'') oraný geçersizdir. Lütfen oraný 0.8 yada 0.9 yapacak þekilde h ve d'' deðerlerini deðiþtiriniz.", "Oran Hatasý");
+                        return;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Donatý adedi deðerini yanlýþ girdiniz.(Geçerli deðerler:6, 8, 12)", "Donatý Adedi Hatasý");
+                    return;
+                }
+            }
+            if (DonKal2 == 420)
+            {
+                if (adet == 6)
+                {
+                    if (oran == 0.8)
+                    {
+                        pictureBox1.ImageLocation = "6 S420 0,8.png";
+                    }
+                    else if (oran == 0.9)
+                    {
+                        pictureBox1.ImageLocation = "6 S420 0,9.png";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Kolonun eðilme doðrultusundaki boyutu(h) ile kolon içindeki donatýlar arasýndaki mesafe(d'') oraný geçersizdir. Lütfen oraný 0.8 yada 0.9 yapacak þekilde h ve d'' deðerlerini deðiþtiriniz.", "Oran Hatasý");
+                        return;
+                    }
+                }
+                else if (adet == 8)
+                {
+                    if (oran == 0.8)
+                    {
+                        pictureBox1.ImageLocation = "8 S420 0,8.png";
+                    }
+                    else if (oran == 0.9)
+                    {
+                        pictureBox1.ImageLocation = "8 S420 0,9.png";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Kolonun eðilme doðrultusundaki boyutu(h) ile kolon içindeki donatýlar arasýndaki mesafe(d'') oraný geçersizdir. Lütfen oraný 0.8 yada 0.9 yapacak þekilde h ve d'' deðerlerini deðiþtiriniz.", "Oran Hatasý");
+                        return;
+                    }
+                }
+                else if (adet == 12)
+                {
+                    if (oran == 0.8)
+                    {
+                        pictureBox1.ImageLocation = "12 S420 0,8.png";
+                    }
+                    else if (oran == 0.9)
+                    {
+                        pictureBox1.ImageLocation = "12 S420 0,9.png";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Kolonun eðilme doðrultusundaki boyutu(h) ile kolon içindeki donatýlar arasýndaki mesafe(d'') oraný geçersizdir. Lütfen oraný 0.8 yada 0.9 yapacak þekilde h ve d'' deðerlerini deðiþtiriniz.", "Oran Hatasý");
+                        return;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Donatý adedi deðerini yanlýþ girdiniz.(Geçerli deðerler:6, 8, 12)", "Donatý Adedi Hatasý");
+                    return;
+                }
+            }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(textBox11.Text))    // Degerin girilmediðini kontrol etme.
+            {
+                MessageBox.Show("Ýstenilen deðerlerden bir yada birkaçýný girmediniz. Lütfen deðerleri giriniz.", "Deðer Girdi Hatasý");
+                return;
+            }
+            if (String.IsNullOrEmpty(textBox1.Text) || String.IsNullOrEmpty(textBox2.Text) || String.IsNullOrEmpty(textBox3.Text) || String.IsNullOrEmpty(textBox4.Text) || String.IsNullOrEmpty(textBox5.Text) || String.IsNullOrEmpty(textBox6.Text) || String.IsNullOrEmpty(textBox7.Text) || String.IsNullOrEmpty(textBox8.Text))
+            {
+                MessageBox.Show("Ýstenilen deðerlerden bir yada birkaçýný girmediniz. Lütfen deðerleri giriniz.", "Deðer Girdi Hatasý");
+                return;
+            }
+            Double BetKal = Convert.ToDouble(textBox1.Text); //Beton kalitesi
+            Double fck = 0, fcd = 0, fctk = 0, fctd = 0, Ec = 0, Gc = 0, k1 = 0;
+            string DonKal = textBox2.Text;  //Donatý Kalitesi
+            Double fyk = 0, fyd = 0;
+            double uc = 0.2, ecu = 0.003, es = 200000, use = 0.3, usp = 0.5, esu = 0.1;
+            if (BetKal == 16)
+            {
+                fck = 16;
+                fcd = 11;
+                fctk = 1.4;
+                fctd = 0.9;
+                Ec = 27000;
+                Gc = 10800;
+                k1 = 0.85;
+            }
+            else if (BetKal == 18)
+            {
+                fck = 18;
+                fcd = 12;
+                fctk = 1.5;
+                fctd = 0.95;
+                Ec = 27500;
+                Gc = 11000;
+                k1 = 0.85;
+            }
+            else if (BetKal == 20)
+            {
+                fck = 20;
+                fcd = 13;
+                fctk = 1.6;
+                fctd = 1;
+                Ec = 28000;
+                Gc = 11200;
+                k1 = 0.85;
+            }
+            else if (BetKal == 25)
+            {
+                fck = 25;
+                fcd = 17;
+                fctk = 1.8;
+                fctd = 1.15;
+                Ec = 30000;
+                Gc = 12000;
+                k1 = 0.85;
+            }
+            else if (BetKal == 30)
+            {
+                fck = 30;
+                fcd = 20;
+                fctk = 1.9;
+                fctd = 1.25;
+                Ec = 32000;
+                Gc = 12800;
+                k1 = 0.82;
+            }
+            else if (BetKal == 35)
+            {
+                fck = 35;
+                fcd = 23;
+                fctk = 2.1;
+                fctd = 1.35;
+                Ec = 33000;
+                Gc = 13200;
+                k1 = 0.79;
+            }
+            else if (BetKal == 40)
+            {
+                fck = 40;
+                fcd = 27;
+                fctk = 2.2;
+                fctd = 1.45;
+                Ec = 34000;
+                Gc = 13600;
+                k1 = 0.76;
+            }
+            else if (BetKal == 45)
+            {
+                fck = 45;
+                fcd = 30;
+                fctk = 2.3;
+                fctd = 1.55;
+                Ec = 36000;
+                Gc = 14400;
+                k1 = 0.73;
+            }
+            else if (BetKal == 50)
+            {
+                fck = 50;
+                fcd = 33;
+                fctk = 2.5;
+                fctd = 1.65;
+                Ec = 37000;
+                Gc = 14800;
+                k1 = 0.7;
+            }
+            else
+            {
+                MessageBox.Show("Yanlýþ yada geçersiz bir deðer girdiniz. Girdiðiniz deðeri kontrol ediniz.", "Beton Sýnýfý Hatasý");
+                return;
+            }
+
+            if (DonKal == "220")
+            {
+                fyk = 220;
+                fyd = 191;
+            }
+            else if (DonKal == "420" || DonKal == "420b")
+            {
+                fyk = 420;
+                fyd = 365;
+            }
+            else if (DonKal == "500")
+            {
+                fyk = 500;
+                fyd = 435;
+            }
+            else if (DonKal == "500b")
+            {
+                fyk = 500;
+                fyd = 435;
+            }
+            else
+            {
+                MessageBox.Show("Yanlýþ yada geçersiz bir deðer girdiniz. Girdiðiniz deðeri kontrol ediniz.", "Donatý Sýnýfý Hatasý");
+                return;
+            }
+            Double adet = Convert.ToDouble(textBox3.Text);
+            Double b = Convert.ToDouble(textBox4.Text);
+            if (b < 250)
+            {
+                MessageBox.Show("Girdiðiniz kolonun küçük boyutu(b) yönetmelik koþulunu saðlamamaktadýr. (250mm)", "Yönetmelik Uyarýsý");
+                return;
+            }
+            Double h = Convert.ToDouble(textBox5.Text);
+            if (h < 300)
+            {
+                MessageBox.Show("Girdiðiniz kolonun eðilme doðrultusundaki boyutu(h) yönetmelik koþulunu saðlamamaktadýr. (300mm)", "Yönetmelik Uyarýsý");
+                return;
+            }
+            if ((b * h) < 75000)
+            {
+                MessageBox.Show("Girdiðiniz kolonun enkesit alaný(Ac) deprem yönetmeliði koþulunu saðlamamaktadýr. (75000mm^2)", "Yönetmelik Uyarýsý");
+                return;
+            }
+            if ((h / b) > 7)
+            {
+                MessageBox.Show("Girdiðiniz boyutlar perde duvarýna aittir. Perde duvar tasarýmý yapýnýz.", "Çizelge Uyarýsý");
+                return;
+            }
+            Double pi = 3.1415926535;
+            Double fi = Convert.ToDouble(textBox11.Text);
+            Double Pt = (fi * fcd) / fyd;
+            if(Pt>=0.005 && Pt<0.01)
+            {
+                if(Pt<=0.06 && Pt>0.04)
+                {
+                    Double Ast = Pt * b * h;
+                    Double cap = (Ast * 4) / (adet * pi);
+                    cap = Math.Sqrt(cap);
+                    cap = Math.Ceiling(cap);
+                    Double Kalan = cap % 2;
+                    cap = cap + Kalan;
+                    if (cap < 14)
+                    {
+                        cap = 14;
+                    }
+                    textBox12.Text = Convert.ToString(cap);
+                    textBox13.Text = "Özel durumda ve bindirme bölgesindeyse elde edilen donatý çapý kullanýlabilir.";
+                }
+                else if (Pt <= 0.04)
+                {
+                    Double Ast = Pt * b * h;
+                    Double cap = (Ast * 4) / (adet * pi);
+                    cap = Math.Sqrt(cap);
+                    cap = Math.Ceiling(cap);
+                    Double Kalan = cap % 2;
+                    cap = cap + Kalan;
+                    if (cap < 14)
+                    {
+                        cap = 14;
+                    }
+                    textBox12.Text = Convert.ToString(cap);
+                    textBox13.Text = "Özel durumda elde edilen donatý çapý kullanýlabilir.";
+                }
+                else
+                {
+                    MessageBox.Show("Kesit uygun deðil kesit boyutlarý arttýrýlmalýdýr.", "Yönetmelik Uyarýsý(Pt max)");
+                    return;
+                }
+            }
+            else if (Pt >= 0.01)
+            {
+                if (Pt <= 0.06 && Pt>0.04)
+                {
+                    Double Ast = Pt * b * h;
+                    Double cap = (Ast * 4) / (adet * pi);
+                    cap = Math.Sqrt(cap);
+                    cap = Math.Ceiling(cap);
+                    Double Kalan = cap % 2;
+                    cap = cap + Kalan;
+                    if (cap < 14)
+                    {
+                        cap = 14;
+                    }
+                    textBox12.Text = Convert.ToString(cap);
+                    textBox13.Text = "Bindirme bölgesindeyse elde edilen donatý çapý kullanýlabilir.";
+                }
+                else if (Pt <= 0.04)
+                {
+                    Double Ast = Pt * b * h;
+                    Double cap = (Ast * 4) / (adet * pi);
+                    cap = Math.Sqrt(cap);
+                    cap = Math.Ceiling(cap);
+                    Double Kalan = cap % 2;
+                    cap = cap + Kalan;
+                    if (cap < 14)
+                    {
+                        cap = 14;
+                    }
+                    textBox12.Text = Convert.ToString(cap);
+                    textBox13.Text = "Bütün þartlar saðlanmýþtýr. Elde edilen donatý çapý kullanýlabilir.";
+                }
+                else
+                {
+                    MessageBox.Show("Kesit uygun deðil kesit boyutlarý arttýrýlmalýdýr.", "Yönetmelik Uyarýsý(Pt max)");
+                    return;
+                }
+            }
+            else
+            {
+                Pt = 0.01;
+                Double Ast = Pt * b * h;
+                Double cap = (Ast * 4) / (adet * pi);
+                cap = Math.Sqrt(cap);
+                cap = Math.Ceiling(cap);
+                Double Kalan = cap % 2;
+                cap = cap + Kalan;
+                if (cap < 14)
+                {
+                    cap = 14;
+                }
+                textBox12.Text = Convert.ToString(cap);
+                textBox13.Text = "Oran minimum orana eþitlenmiþtir. Girilen donatý çapý kullanýlabilir.";
+                
+            }
+        }
+
+        
+    }
+}
